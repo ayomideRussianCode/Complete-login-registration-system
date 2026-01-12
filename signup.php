@@ -7,13 +7,15 @@ if(isset($_POST['email'])){
     $username = $_POST['username'];
     $password = $_POST['password'];
 
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
    try{
      $sql = " INSERT INTO users (username, email, password, join_date)
     VALUES (:username, :email , :password, now())
     ";
 
     $stmt = $db->prepare($sql);
-    $stmt->execute(array(':username'=>$username, ':email'=> $email, ':password'=>$password));
+    $stmt->execute(array(':username'=>$username, ':email'=> $email, ':password'=>$hashed_password));
 
     if($stmt->rowCount() == 1){
 
