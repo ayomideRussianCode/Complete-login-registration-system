@@ -4,15 +4,26 @@ include_once 'resource/Database.php';
 if(isset($_POST['email'])){
 
     $email = $_POST['email'];
-    $username = $_POST['user$username'];
+    $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $sql = " INSERT INTO users (username, email, password, join_date)
+   try{
+     $sql = " INSERT INTO users (username, email, password, join_date)
     VALUES (:username, :email , :password, now())
     ";
 
     $stmt = $db->prepare($sql);
-    
+    $stmt->execute(array(':username'=>$username, ':email'=> $email, ':password'=>$password));
+
+    if($stmt->rowCount() == 1){
+
+       $message =  "<p style = 'padding: 20px; color: green;' > Registration successful </p>" ;
+    }
+} catch (PDOException $e) {
+
+           $message = "<p style = 'padding: 20px; color: red;' > An error occurred: ".$e->getMessage()." </p>";
+
+}
 
 }
 
@@ -36,7 +47,9 @@ if(isset($_POST['email'])){
     <h3>Registration Form</h3>
 
  
-
+    <?php 
+    if(isset($message)) echo $message;
+     ?>
     <form method="POST" action="">
         <table>
             <tr>
