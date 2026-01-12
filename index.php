@@ -24,7 +24,7 @@ include_once 'resource/Database.php';
 
     <?php else: ?>
 
-    <p>You are logged in as <?php if(isset($_SESSION['username'])) echo $_SESSION['username']; ?> <a href="logout.php">Logout</a></p>
+    <p>You are logged in as <?php if(isset($_SESSION['username'])) echo $_SESSION['username']; ?> <a href="logout.php"> Logout</a></p>
 
     <?php endif ?>
 

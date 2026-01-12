@@ -3,52 +3,51 @@ include_once 'resource/Database.php';
 include_once 'resource/session.php';
 include_once 'resource/utilities.php';
 
-if(isset($_POST['login_btn'])){
-    
+if (isset($_POST['login_btn'])) {
 
-//array to hold errors
 
-$form_errors = array();
+    //array to hold errors
 
-//validate
-$required_fields = array('username', 'password');
+    $form_errors = array();
 
-$form_errors = array_merge($form_errors, check_empty_fields($required_fields));
+    //validate
+    $required_fields = array('username', 'password');
 
-if(empty($form_errors)){
-    //collect form data
+    $form_errors = array_merge($form_errors, check_empty_fields($required_fields));
 
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    if (empty($form_errors)) {
+        //collect form data
 
-    //check if user exist in the db
+        $username = $_POST['username'];
+        $password = $_POST['password'];
 
-    $sql = " SELECT * FROM users WHERE username = :username";
-    $stmt = $db->prepare($sql);
-    $stmt->execute((array(':username' => $username)));
+        //check if user exist in the db
 
-    while($row = $stmt->fetch()){
-        $id = $row['id'];
-        $hashed_password = $row['password'];
-        $username = $row['username'];
+        $sql = " SELECT * FROM users WHERE username = :username";
+        $stmt = $db->prepare($sql);
+        $stmt->execute((array(':username' => $username)));
 
-        if(password_verify($password, $hashed_password)){
+        while ($row = $stmt->fetch()) {
+            $id = $row['id'];
+            $hashed_password = $row['password'];
+            $username = $row['username'];
 
-            $_SESSION['id'] =  $id;
-            $_SESSION['username'] = $username;
-            header("location: index.php");
+            if (password_verify($password, $hashed_password)) {
+
+                $_SESSION['id'] =  $id;
+                $_SESSION['username'] = $username;
+                header("location: index.php");
+            } else {
+                $message = "<p style='padding: 20px; color:red; border: 1px solid gray;'>Invalid username or password</p>";
+            }
+        }
+    } else {
+        if (count($form_errors) == 1) {
+            $message = "<p style='color:red;'>There was an error in the form</p>";
         } else {
-            $message = "<p style='padding: 20px; color:red; border: 1px solid gray;'>Invalid username or password</p>";
+            $message =  "<p style='color:red;'>There were " . count($form_errors) . " errors in the form</p>";
         }
     }
-
-} else {
-    if(count($form_errors ) == 1){
-        $message = "<p style='color:red;'>There was an error in the form</p>";
-    }else {
-        $message =  "<p style='color:red;'>There were " .count($form_errors). " errors in the form</p>";
-    }
-}
 }
 
 ?>
@@ -68,9 +67,9 @@ if(empty($form_errors)){
 
     <h3>Login Form</h3>
 
-    <?php if(isset($message)) echo $message; ?>
+    <?php if (isset($message)) echo $message; ?>
 
-        <?php if(!empty($form_errors)) echo show_errors($form_errors); ?>
+    <?php if (!empty($form_errors)) echo show_errors($form_errors); ?>
 
 
     <form method="post" action="">
@@ -96,6 +95,7 @@ if(empty($form_errors)){
 
         </table>
     </form>
+    <p> <a href="forgot-password.php">forgot password?</a></p>
 
     <p> <a href="index.php">Back</a></p>
 
